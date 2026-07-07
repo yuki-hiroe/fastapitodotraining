@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-heading">
+    <h1>タスク詳細</h1>
+    <p>ID: {{ todo.id }}</p>
+</section>
+
+<div class="card">
+    <div class="card-section detail-card">
+        <div class="detail-status {% if todo.done %}is-done{% else %}is-pending{% endif %}">
+            {% if todo.done %}
+            ✓ 完了済み
+            {% else %}
+            ○ 未完了
+            {% endif %}
+        </div>
+
+        <h2 class="detail-title">{{ todo.title }}</h2>
+
+        <p class="detail-meta">
+            {% if todo.done %}
+            このタスクは完了しています。お疲れさまでした！
+            {% else %}
+            このタスクはまだ未完了です。頑張りましょう。
+            {% endif %}
+        </p>
+
+        <div class="detail-actions">
+            <a href="/" class="btn btn-ghost">← 一覧に戻る</a>
+            <form action="/done/{{ todo.id }}" method="post">
+                <button type="submit" class="btn {% if todo.done %}btn-warning{% else %}btn-success{% endif %}">
+                    {% if todo.done %}未完了に戻す{% else %}完了にする{% endif %}
+                </button>
+            </form>
+            <form action="/delete/{{ todo.id }}" method="post">
+                <button type="submit" class="btn btn-danger">削除</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
