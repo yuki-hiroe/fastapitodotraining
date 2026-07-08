@@ -425,6 +425,113 @@ body {
     flex-wrap: wrap;
 }
 
+/* Calendar */
+.calendar-card {
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.calendar-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.calendar-nav {
+    min-width: 40px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 4px 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text);
+    border: 1px solid transparent;
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--surface-hover);
+    border-color: var(--border);
+}
+
+.calendar-day.is-empty {
+    pointer-events: none;
+}
+
+.calendar-day.is-today .calendar-day-number {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.calendar-day.is-selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.calendar-day.is-selected.is-today .calendar-day-number {
+    color: white;
+}
+
+.calendar-day.is-selected .calendar-dot {
+    background: white;
+}
+
+.calendar-day-number {
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.calendar-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    margin-top: 4px;
+}
+
+.calendar-day.has-todos:not(.is-selected) {
+    font-weight: 600;
+}
+
+.add-form-note {
+    margin-top: 10px;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
 /* Footer */
 .footer {
     margin-top: 40px;

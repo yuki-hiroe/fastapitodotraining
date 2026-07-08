@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-heading">
+    <a
+        href="/?cal_year={{ selected_date.year }}&cal_month={{ selected_date.month }}"
+        class="btn btn-ghost btn-sm"
+    >← カレンダーに戻る</a>
+    <h1>{{ title }}</h1>
+    <p>{{ selected_date.strftime("%Y年%m月%d日") }} のタスク</p>
+</section>
+
+<div class="card">
+    <div class="card-section">
+        <form action="/add" method="post" class="add-form">
+            <input type="text" name="title" placeholder="新しいタスクを入力..." required autofocus>
+            <input type="hidden" name="todo_date" value="{{ selected_date.isoformat() }}">
+            <button type="submit" class="btn btn-primary">追加</button>
+        </form>
+        <p class="add-form-note">{{ selected_date.strftime("%Y年%m月%d日") }} に追加されます</p>
+    </div>
+
+    {% if todos %}
+    <div class="stats">
+        <div class="stat">
+            <span>全件</span>
+            <span class="stat-value">{{ todos|length }}</span>
+        </div>
+        <div class="stat">
+            <span>完了</span>
+            <span class="stat-value">{{ todos|selectattr('done')|list|length }}</span>
+        </div>
+        <div class="stat">
+            <span>未完了</span>
+            <span class="stat-value">{{ todos|rejectattr('done')|list|length }}</span>
+        </div>
+    </div>
+
+    <ul class="todo-list">
+        {% for todo in todos %}
+        <li class="todo-item{% if todo.done %} is-done{% endif %}">
+            <div class="todo-checkbox">
+                <form action="/done/{{ todo.id }}" method="post">
+                    <button type="submit" class="check-btn" title="{% if todo.done %}未完了に戻す{% else %}完了にする{% endif %}" aria-label="{% if todo.done %}未完了に戻す{% else %}完了にする{% endif %}">
+                        {% if todo.done %}✓{% endif %}
+                    </button>
+                </form>
+            </div>
+
+            <div class="todo-content">
+                <div class="todo-title">{{ todo.title }}</div>
+                <span class="todo-badge {% if todo.done %}badge-done{% else %}badge-pending{% endif %}">
+                    {% if todo.done %}完了{% else %}未完了{% endif %}
+                </span>
+            </div>
+
+            <div class="todo-actions">
+                <form action="/about/{{ todo.id }}" method="get">
+                    <button type="submit" class="btn btn-ghost btn-sm">詳細</button>
+                </form>
+                <form action="/delete/{{ todo.id }}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon" aria-hidden="true">📝</div>
+        <h2>この日のタスクはありません</h2>
+        <p>上のフォームから Todo を追加するか、カレンダーで別の日付を選んでください</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

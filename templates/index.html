@@ -3,68 +3,50 @@
 {% block content %}
 <section class="page-heading">
     <h1>{{ title }}</h1>
-    <p>今日やることを記録しましょう</p>
+    <p>日付をクリックしてタスク一覧へ</p>
 </section>
 
-<div class="card">
-    <div class="card-section">
-        <form action="/add" method="post" class="add-form">
-            <input type="text" name="title" placeholder="新しいタスクを入力..." required autofocus>
-            <button type="submit" class="btn btn-primary">追加</button>
-        </form>
+<div class="card calendar-card">
+    <div class="card-section calendar-header">
+        <a
+            href="/?cal_year={{ prev_cal_year }}&cal_month={{ prev_cal_month }}"
+            class="btn btn-ghost btn-sm calendar-nav"
+            aria-label="前の月"
+        >←</a>
+        <h2 class="calendar-title">{{ cal_title }}</h2>
+        <a
+            href="/?cal_year={{ next_cal_year }}&cal_month={{ next_cal_month }}"
+            class="btn btn-ghost btn-sm calendar-nav"
+            aria-label="次の月"
+        >→</a>
     </div>
 
-    {% if todos %}
-    <div class="stats">
-        <div class="stat">
-            <span>全件</span>
-            <span class="stat-value">{{ todos|length }}</span>
+    <div class="card-section calendar-body">
+        <div class="calendar-weekdays">
+            {% for label in weekday_labels %}
+            <span class="calendar-weekday">{{ label }}</span>
+            {% endfor %}
         </div>
-        <div class="stat">
-            <span>完了</span>
-            <span class="stat-value">{{ todos|selectattr('done')|list|length }}</span>
-        </div>
-        <div class="stat">
-            <span>未完了</span>
-            <span class="stat-value">{{ todos|rejectattr('done')|list|length }}</span>
+
+        <div class="calendar-grid">
+            {% for week in calendar_weeks %}
+                {% for day in week %}
+                    {% if day %}
+                    <a
+                        href="/todos/{{ day.iso }}"
+                        class="calendar-day{% if day.is_selected %} is-selected{% endif %}{% if day.is_today %} is-today{% endif %}{% if day.has_todos %} has-todos{% endif %}"
+                    >
+                        <span class="calendar-day-number">{{ day.day }}</span>
+                        {% if day.has_todos %}
+                        <span class="calendar-dot" aria-hidden="true"></span>
+                        {% endif %}
+                    </a>
+                    {% else %}
+                    <span class="calendar-day is-empty" aria-hidden="true"></span>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
         </div>
     </div>
-
-    <ul class="todo-list">
-        {% for todo in todos %}
-        <li class="todo-item{% if todo.done %} is-done{% endif %}">
-            <div class="todo-checkbox">
-                <form action="/done/{{ todo.id }}" method="post">
-                    <button type="submit" class="check-btn" title="{% if todo.done %}未完了に戻す{% else %}完了にする{% endif %}" aria-label="{% if todo.done %}未完了に戻す{% else %}完了にする{% endif %}">
-                        {% if todo.done %}✓{% endif %}
-                    </button>
-                </form>
-            </div>
-
-            <div class="todo-content">
-                <div class="todo-title">{{ todo.title }}</div>
-                <span class="todo-badge {% if todo.done %}badge-done{% else %}badge-pending{% endif %}">
-                    {% if todo.done %}完了{% else %}未完了{% endif %}
-                </span>
-            </div>
-
-            <div class="todo-actions">
-                <form action="/about/{{ todo.id }}" method="get">
-                    <button type="submit" class="btn btn-ghost btn-sm">詳細</button>
-                </form>
-                <form action="/delete/{{ todo.id }}" method="post">
-                    <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                </form>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true">📝</div>
-        <h2>タスクがありません</h2>
-        <p>上のフォームから最初の Todo を追加してください</p>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
